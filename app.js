@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require("body-parser")
 const fs = require('fs')
 const app = express()
-const PORT = 5000
+const PORT = 3000
 const path = require('path')
 
 //Middleware
@@ -13,12 +13,12 @@ app.set('view engine', 'ejs');
 
 //load tasks from the JSON file
 const getTasks = () => {
-    const data = fs.readFileSync(path.join(__dirname, 'data', 'tasks.json', 'utf8'));
+    const data = fs.readFileSync('./data/tasks.json', 'utf8');
     return JSON.parse(data);
 };
 
 const saveTasks = (tasks) => {
-    fs.writeFileSync(path.join(__dirname, 'data', 'tasks.json', 'utf8', JSON.stringify(tasks, null, 2)));
+    fs.writeFileSync('./data/tasks.json', JSON.stringify(tasks, null, 2));
 };
 
 //routes
@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 });
 
 //post: create new task
-app.get('/tasks', (req, res) => {
+app.post('/tasks', (req, res) => {
     const tasks = getTasks();
     const newTask = {
         id: tasks.length+1,
@@ -53,9 +53,10 @@ app.get('/tasks/:id/edit', (req, res) => {
 //put: update a task
 app.post('/tasks/:id', (req,res) => {
     const tasks = getTasks();
-    const task = tasks.find(task => task.id == req.params.id)//finding the right item
-    tasks[taskIndex].description = req.body.description; //redefine the task data
+    const taskIndex = tasks.findIndex(task => task.id == req.params.id)//finding the right item
+    tasks[taskIndex].type = req.body.type; //redefine the task data
     tasks[taskIndex].name = req.body.name; //redefine the task data
+    tasks[taskIndex].date = req.body.date; 
     saveTasks(tasks)
     res.redirect('/');
 });
