@@ -74,3 +74,11 @@ app.listen(PORT, () => {
 });
 
 
+
+
+try {
+    const data = fs.readFileSync(path.join(__dirname, './data/events.json'), 'utf8');
+    return JSON.parse(data)
+} catch (error) {
+    console.log(`looking for ${data}`);
+}
